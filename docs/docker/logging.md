@@ -4,7 +4,7 @@ CWDS uses Docker containers to package and deploy components. Specifics about Do
 ##Docker Logging Options
 Docker logging options are generally covered on the Docker web site at
 
->https://docs.docker.com/engine/admin/logging/overview/
+> https://docs.docker.com/engine/admin/logging/overview/
 
 The logging options that we use are likely to change and evolve as we learn and grow, but we will start with Syslog, AWS CloudWatch, and Splunk.
 
