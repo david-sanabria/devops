@@ -1,2 +1,3 @@
 # About Pubkeys...
-This directory contains public SSH keys used by CWDS technical folks. This is a short-term location until we can convince these folks to move their keys into their GitHub profiles.
+This directory contains public SSH keys used by CWDS technical folks for non-production server access. 
+Once your key is posted, contact the DevOps team oncall to have the public key pulled to the servers you are authorized to access.
