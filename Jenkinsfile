@@ -14,8 +14,8 @@ node('cm-slave') {
         }
         
         
-        stage('Deploy Preint') {
-            sh "curl -v http://${JENKINS_USER}:${JENKINS_API_TOKEN}@jenkins.mgmt.cwds.io:8080/job/preint/job/deploy-case-mng/buildWithParameters?token=${JENKINS_TRIGGER_TOKEN}&cause=Caused%20by%20Build%20${env.BUILD_ID}"
+        stage('Deploy to mgmt') {
+            sh "curl -v http://jenkins.mgmt.cwds.io:8080/job/fit-promote-fromdev/buildWithParameters?token=${JENKINS_TRIGGER_TOKEN}&cause=Caused%20by%20Build%20${env.BUILD_ID}"
         }
         
     } catch(Exception e) {
