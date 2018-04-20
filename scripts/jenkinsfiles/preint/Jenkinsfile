@@ -1,5 +1,7 @@
 node('preint'){
-  stage('Pipeline test'){
-    echo "Pipeline test success"
+  stage('Check version formatting is correct'){
+    withEnv(["APP_NAME=intake", "ENVIRONMENT_NAME=preint", "VERSION=$INTAKE_APP_VERSION"]) {
+      sh './scripts/utils/manifest_tagging.rb'
+    }
   }
 }
