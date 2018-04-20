@@ -1,0 +1,5 @@
+node('preint'){
+  stage('Pipeline test'){
+    echo "Pipeline test success"
+  }
+}
