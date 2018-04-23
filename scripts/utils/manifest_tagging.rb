@@ -11,7 +11,7 @@ version = ENV['VERSION']
 Dir.chdir('cws-cares') do
   puts "Updating the manifest for #{ENV['ENVIRONMENT_NAME']} with this version: #{version}"
   yaml_file = File.open(yaml_filename)
-  manifest = YAML.safe_load(yaml_file) || {}
+  manifest = YAML.load(yaml_file) || {}
   manifest[app_name] = version
 
   File.open(yaml_filename, 'w') do |h|
