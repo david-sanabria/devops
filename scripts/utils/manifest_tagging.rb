@@ -17,6 +17,8 @@ Dir.chdir('cws-cares') do
     h.write manifest.to_yaml
   end
 
+  `git config user.email "automated@jenkins.cwds.io"`
+  `git config user.name "Jenkins automated manifest tagging system"`
   `git add #{yaml_filename}`
   `git commit -m "Automatic #{app_name} version update on #{yaml_filename}"`
 
