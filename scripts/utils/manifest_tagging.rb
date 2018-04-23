@@ -19,5 +19,5 @@ Dir.chdir('cws-cares') do
   end
 
   `docker build -t cws-cares-ci .`
-  exec("docker run -it --rm -v $(pwd):/usr/src/app/ cws-cares-ci")
+  exec("docker run --rm -v $(pwd):/usr/src/app/ cws-cares-ci")
 end
