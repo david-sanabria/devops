@@ -7,7 +7,6 @@ app_name = ENV['APP_NAME']
 yaml_filename = "#{ENV['ENVIRONMENT_NAME']}.yaml"
 version = ENV['VERSION']
 
-`git clone --depth=1 git@github.com:ca-cwds/cws-cares.git`
 Dir.chdir('cws-cares') do
   puts "Updating the manifest for #{ENV['ENVIRONMENT_NAME']} with this version: #{version}"
   yaml_file = File.open(yaml_filename)
