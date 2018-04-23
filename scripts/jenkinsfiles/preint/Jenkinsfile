@@ -29,6 +29,12 @@ node('preint'){
     }
   }
 
+  stage('Update manifest'){
+    dir('cws-cares'){
+      sh 'git push origin head'
+    }
+  }
+
   stage('Clean'){
     cleanWs()
   }
