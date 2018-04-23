@@ -3,6 +3,7 @@ node('preint'){
     [$class: 'RebuildSettings', autoRebuild: false, rebuildDisabled: false],
     parameters([
       string(defaultValue: 'latest', description: 'Intake container version', name: 'INTAKE_APP_VERSION'),
+      string(defaultValue: 'inventories/preint/hosts.yml', description: 'Ansible inventory', name: 'INVENTORY'),
       booleanParam(defaultValue: true, description: 'Enable/Disable New Relic agent', name: 'ENABLE_NEWRELIC')]),pipelineTriggers([])
   ])
 
@@ -14,6 +15,14 @@ node('preint'){
     withEnv(["APP_NAME=intake", "ENVIRONMENT_NAME=preint", "VERSION=$INTAKE_APP_VERSION"]) {
       sh './scripts/utils/manifest_tagging.rb'
     }
+  }
+
+  stage('Deploy to preint'){
+    sh "ansible-playbook -e NEW_RELIC_AGENT=$ENABLE_NEWRELIC -e INTAKE_APP_VERSION=$INTAKE_APP_VERSION -i $INVENTORY deploy-intake.yml --vault-password-file ~/.ssh/vault.txt -vv"
+  }
+
+  stage('Update manifest'){
+    sh 'cd cws-cares & git push origin'
   }
 
   stage('Clean'){
