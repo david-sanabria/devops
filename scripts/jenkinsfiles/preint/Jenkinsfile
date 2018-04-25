@@ -1,0 +1,42 @@
+node('preint'){
+  properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '5')),
+    [$class: 'RebuildSettings', autoRebuild: false, rebuildDisabled: false],
+    parameters([
+      string(defaultValue: 'latest', description: 'Intake container version', name: 'INTAKE_APP_VERSION'),
+      string(defaultValue: 'inventories/preint/hosts.yml', description: 'Ansible inventory', name: 'INVENTORY'),
+      string(defaultValue: 'deploy-intake.yml', description: 'Ansible playbook', name: 'PLAYBOOK_NAME'),
+      booleanParam(defaultValue: true, description: 'Enable/Disable New Relic agent', name: 'ENABLE_NEWRELIC')]),pipelineTriggers([])
+  ])
+
+  stage('Get necessary artifacts'){
+    git branch: 'FIT-48-create-a-pipeline-for-intake-preint', credentialsId: '433ac100-b3c2-4519-b4d6-207c029a103b', url: 'git@github.com:ca-cwds/devops.git'
+    dir('cws-cares'){
+      git branch: 'automated_manifest_test', credentialsId: '433ac100-b3c2-4519-b4d6-207c029a103b', url: 'git@github.com:ca-cwds/cws-cares.git'
+    }
+    dir('de-ansible'){
+      git branch: 'master', credentialsId: '433ac100-b3c2-4519-b4d6-207c029a103b', url: 'git@github.com:ca-cwds/de-ansible.git'
+    }
+  }
+
+  stage('Check version formatting is correct'){
+    withEnv(["APP_NAME=intake", "ENVIRONMENT_NAME=preint", "VERSION=$INTAKE_APP_VERSION"]) {
+      sh './scripts/utils/manifest_tagging.rb'
+    }
+  }
+
+  stage('Deploy to preint'){
+    dir('de-ansible'){
+      sh "ansible-playbook -e NEW_RELIC_AGENT=$ENABLE_NEWRELIC -e INTAKE_APP_VERSION=$INTAKE_APP_VERSION -i $INVENTORY $PLAYBOOK_NAME --vault-password-file ~/.ssh/vault.txt -vv"
+    }
+  }
+
+  stage('Update manifest'){
+    dir('cws-cares'){
+      sh 'git push origin head'
+    }
+  }
+
+  stage('Clean'){
+    cleanWs()
+  }
+}
