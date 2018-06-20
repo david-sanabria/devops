@@ -1,0 +1,17 @@
+node('preint'){
+  properties([
+    [$class: 'RebuildSettings', autoRebuild: false, rebuildDisabled: false],
+    parameters([
+      string(defaultValue: '', description: 'Container Name', name: 'CONTAINER_NAME'),
+      string(defaultValue: '', description: 'Container version', name: 'CONTAINER_VERSION'),
+      string(defaultValue: '', description: 'Container Org', name: 'CONTAINER_ORG')]),pipelineTriggers([])
+  ])
+
+  stage('Get necessary artifacts'){
+    git branch: 'master', credentialsId: '433ac100-b3c2-4519-b4d6-207c029a103b', url: 'git@github.com:ca-cwds/devops.git'
+  }
+
+  stage('Clean'){
+    cleanWs()
+  }
+}
