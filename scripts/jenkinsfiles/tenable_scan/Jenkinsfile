@@ -4,7 +4,10 @@ node('intake-slave'){
     parameters([
       string(defaultValue: '', description: 'Container Name', name: 'CONTAINER_NAME'),
       string(defaultValue: '', description: 'Container version', name: 'CONTAINER_VERSION'),
-      string(defaultValue: 'cwds', description: 'Container Org', name: 'CONTAINER_ORG')]),pipelineTriggers([])
+      string(defaultValue: 'cwds', description: 'Container Org', name: 'CONTAINER_ORG'),
+      string(defaultValue: 'cwds', description: 'Tenable Repository', name: 'TENABLE_REPOSITORY'),
+      string(defaultValue: 'registry.cloud.tenable.com', description: 'Tenable Registry', name: 'TENABLE_REGISTRY')]),pipelineTriggers([])
+
   ])
 
   stage('Get necessary artifacts'){
@@ -14,7 +17,7 @@ node('intake-slave'){
   stage('Checkout and tag from dockerhub'){
     withDockerRegistry([credentialsId: '6ba8d05c-ca13-4818-8329-15d41a089ec0']){
       sh "docker pull $CONTAINER_ORG/$CONTAINER_NAME:$CONTAINER_VERSION"
-      sh "docker tag $CONTAINER_ORG/$CONTAINER_NAME:$CONTAINER_VERSION registry.cloud.tenable.com/cwds/$CONTAINER_NAME-$CONTAINER_VERSION"
+      sh "docker tag $CONTAINER_ORG/$CONTAINER_NAME:$CONTAINER_VERSION $TENABLE_REGISTRY/$TENABLE_REPOSITORY/$CONTAINER_NAME-$CONTAINER_VERSION"
     }
   }
 
@@ -23,8 +26,8 @@ node('intake-slave'){
       usernamePassword(credentialsId: 'tenable-key',
       passwordVariable: 'TENABLE_IO_SECRET_KEY',
       usernameVariable: 'TENABLE_IO_ACCESS_KEY')]) {
-      sh 'docker login -u $TENABLE_IO_ACCESS_KEY -p $TENABLE_IO_SECRET_KEY registry.cloud.tenable.com'
-      sh "docker push registry.cloud.tenable.com/cwds/$CONTAINER_NAME-$CONTAINER_VERSION"
+      sh 'docker login -u $TENABLE_IO_ACCESS_KEY -p $TENABLE_IO_SECRET_KEY ' + "$TENABLE_REGISTRY"
+      sh "docker push $TENABLE_REGISTRY/$TENABLE_REPOSITORY/$CONTAINER_NAME-$CONTAINER_VERSION"
     }
   }
 
