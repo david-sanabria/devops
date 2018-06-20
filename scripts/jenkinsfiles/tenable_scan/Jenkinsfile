@@ -1,4 +1,4 @@
-node('preint'){
+node('intake-slave'){
   properties([
     [$class: 'RebuildSettings', autoRebuild: false, rebuildDisabled: false],
     parameters([
