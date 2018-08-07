@@ -9,6 +9,7 @@ node('intake-slave'){
       string(defaultValue: 'registry.cloud.tenable.com', description: 'Tenable Registry', name: 'TENABLE_REGISTRY')]),pipelineTriggers([])
 
   ])
+  def CONTAINER_NEW_VERSION = "$CONTAINER_VERSION".toLowerCase()
 
   stage('Get necessary artifacts'){
     git branch: 'master', credentialsId: '433ac100-b3c2-4519-b4d6-207c029a103b', url: 'git@github.com:ca-cwds/devops.git'
@@ -17,7 +18,7 @@ node('intake-slave'){
   stage('Checkout and tag from dockerhub'){
     withDockerRegistry([credentialsId: '6ba8d05c-ca13-4818-8329-15d41a089ec0']){
       sh "docker pull $CONTAINER_ORG/$CONTAINER_NAME:$CONTAINER_VERSION"
-      sh "docker tag $CONTAINER_ORG/$CONTAINER_NAME:$CONTAINER_VERSION $TENABLE_REGISTRY/$TENABLE_REPOSITORY/$CONTAINER_NAME-$CONTAINER_VERSION"
+      sh "docker tag $CONTAINER_ORG/$CONTAINER_NAME:$CONTAINER_VERSION $TENABLE_REGISTRY/$TENABLE_REPOSITORY/$CONTAINER_NAME-$CONTAINER_NEW_VERSION"
     }
   }
 
@@ -27,7 +28,7 @@ node('intake-slave'){
       passwordVariable: 'TENABLE_IO_SECRET_KEY',
       usernameVariable: 'TENABLE_IO_ACCESS_KEY')]) {
       sh 'docker login -u $TENABLE_IO_ACCESS_KEY -p $TENABLE_IO_SECRET_KEY ' + "$TENABLE_REGISTRY"
-      sh "docker push $TENABLE_REGISTRY/$TENABLE_REPOSITORY/$CONTAINER_NAME-$CONTAINER_VERSION"
+      sh "docker push $TENABLE_REGISTRY/$TENABLE_REPOSITORY/$CONTAINER_NAME-$CONTAINER_NEW_VERSION"
     }
   }
 
