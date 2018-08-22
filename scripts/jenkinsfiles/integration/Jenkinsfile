@@ -36,12 +36,6 @@ node('integration'){
     }
   }
 
-  stage ('Trigger Smoke acceptance tests') {
-           build job: '/Acceptance_tests/acceptance-test-intake/',
-               parameters: [string(name: 'APP_VERSION', value: APP_VERSION)],
-               wait: false
-  }
-
   stage('Clean'){
     cleanWs()
   }
