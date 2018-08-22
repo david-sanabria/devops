@@ -19,7 +19,7 @@ node('integration'){
   }
 
   stage('Check version formatting is correct'){
-    withEnv(["APP_NAME=$INTAKE_APP_VERSION", "ENVIRONMENT_NAME=integration", "VERSION=$INTAKE_APP_VERSION"]) {
+    withEnv(["APP_NAME=intake", "ENVIRONMENT_NAME=integration", "VERSION=$INTAKE_APP_VERSION"]) {
       sh './scripts/utils/manifest_tagging.rb'
     }
   }
