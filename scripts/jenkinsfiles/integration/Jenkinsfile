@@ -2,7 +2,7 @@ node('integration'){
   properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '5')),
     [$class: 'RebuildSettings', autoRebuild: false, rebuildDisabled: false],
     parameters([
-      string(defaultValue: 'test', description: 'Container version', name: 'INTAKE_APP_VERSION'),
+      string(defaultValue: 'latest', description: 'Container version', name: 'INTAKE_APP_VERSION'),
       string(defaultValue: 'inventories/integration/hosts.yml', description: 'Ansible inventory', name: 'INVENTORY'),
       string(defaultValue: 'deploy-intake.yml', description: 'Ansible playbook', name: 'PLAYBOOK_NAME'),
       booleanParam(defaultValue: true, description: 'Enable/Disable New Relic agent', name: 'ENABLE_NEWRELIC')]),pipelineTriggers([])
