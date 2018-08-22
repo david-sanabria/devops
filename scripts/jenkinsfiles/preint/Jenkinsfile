@@ -2,7 +2,7 @@ node('preint'){
   properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '5')),
     [$class: 'RebuildSettings', autoRebuild: false, rebuildDisabled: false],
     parameters([
-      string(defaultValue: '1.3.1204-RC.468', description: 'Intake container version', name: 'APP_VERSION'),
+      string(defaultValue: 'latest', description: 'Intake container version', name: 'APP_VERSION'),
       string(defaultValue: 'inventories/preint/hosts.yml', description: 'Ansible inventory', name: 'INVENTORY'),
       string(defaultValue: 'deploy-intake.yml', description: 'Ansible playbook', name: 'PLAYBOOK_NAME'),
       booleanParam(defaultValue: true, description: 'Enable/Disable New Relic agent', name: 'ENABLE_NEWRELIC')]),pipelineTriggers([])
