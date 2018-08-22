@@ -23,5 +23,5 @@ Dir.chdir('cws-cares') do
   `git commit -m "Automatic #{app_name} version update on #{yaml_filename}"`
 
   `docker build -t cws-cares-ci .`
-  exec("docker run --rm -v "$(pwd)":/usr/src/app/ cws-cares-ci")
+  exec(docker run --rm -v "$(pwd)":/usr/src/app/ cws-cares-ci)
 end
