@@ -1,9 +1,9 @@
-node('preint'){
+node('integration'){
   properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '5')),
     [$class: 'RebuildSettings', autoRebuild: false, rebuildDisabled: false],
     parameters([
-      string(defaultValue: 'latest', description: 'Intake container version', name: 'APP_VERSION'),
-      string(defaultValue: 'inventories/preint/hosts.yml', description: 'Ansible inventory', name: 'INVENTORY'),
+      string(defaultValue: 'latest', description: 'Container version', name: 'APP_VERSION'),
+      string(defaultValue: 'inventories/integration/hosts.yml', description: 'Ansible inventory', name: 'INVENTORY'),
       string(defaultValue: 'deploy-intake.yml', description: 'Ansible playbook', name: 'PLAYBOOK_NAME'),
       booleanParam(defaultValue: true, description: 'Enable/Disable New Relic agent', name: 'ENABLE_NEWRELIC')]),pipelineTriggers([])
   ])
@@ -19,12 +19,12 @@ node('preint'){
   }
 
   stage('Check version formatting is correct'){
-    withEnv(["APP_NAME=intake", "ENVIRONMENT_NAME=preint", "VERSION=$APP_VERSION"]) {
+    withEnv(["APP_NAME=intake", "ENVIRONMENT_NAME=integration", "VERSION=$APP_VERSION"]) {
       sh './scripts/utils/manifest_tagging.rb'
     }
   }
 
-  stage('Deploy to preint'){
+  stage('Deploy to Integraton'){
     dir('de-ansible'){
       sh "ansible-playbook -e NEW_RELIC_AGENT=$ENABLE_NEWRELIC -e INTAKE_APP_VERSION=$APP_VERSION -i $INVENTORY $PLAYBOOK_NAME --vault-password-file ~/.ssh/vault.txt -vv"
     }
@@ -34,12 +34,6 @@ node('preint'){
     dir('cws-cares'){
       sh 'git push origin master'
     }
-  }
-
-  stage ('Trigger Smoke acceptance tests') {
-           build job: '/Acceptance_tests/acceptance-test-intake/',
-               parameters: [string(name: 'APP_VERSION', value: APP_VERSION)],
-               wait: false
   }
 
   stage('Clean'){
