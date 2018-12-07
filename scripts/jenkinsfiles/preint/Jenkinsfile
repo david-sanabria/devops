@@ -32,7 +32,7 @@ node('preint'){
 
   stage('Update manifest'){
     dir('cws-cares'){
-      sh 'git push origin master'
+      sh 'git pull --rebase origin master && git push origin master'
     }
   }
 
