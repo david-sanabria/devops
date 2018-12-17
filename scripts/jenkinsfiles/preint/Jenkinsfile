@@ -1,3 +1,5 @@
+@Library('jenkins-pipeline-utils') _
+
 node('preint'){
   properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '5')),
     [$class: 'RebuildSettings', autoRebuild: false, rebuildDisabled: false],
@@ -31,14 +33,12 @@ node('preint'){
   }
 
   stage('Update manifest'){
-    dir('cws-cares'){
-      sh 'git pull --rebase origin master && git push origin master'
-    }
+    updateManifest("intake", "preint", "433ac100-b3c2-4519-b4d6-207c029a103b", env.APP_VERSION)
   }
 
   stage ('Trigger Smoke acceptance tests') {
            build job: '/Acceptance_tests/acceptance-test-intake/',
-               parameters: [string(name: 'APP_VERSION', value: APP_VERSION)],
+               parameters: [string(name: 'APP_VERSION', value: "${APP_VERSION}")],
                wait: false
   }
 
