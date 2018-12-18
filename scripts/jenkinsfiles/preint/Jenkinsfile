@@ -1,3 +1,5 @@
+@Library('jenkins-pipeline-utils') _
+
 node('preint'){
   properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '5')),
     [$class: 'RebuildSettings', autoRebuild: false, rebuildDisabled: false],
@@ -10,17 +12,8 @@ node('preint'){
 
   stage('Get necessary artifacts'){
     git branch: 'master', credentialsId: '433ac100-b3c2-4519-b4d6-207c029a103b', url: 'git@github.com:ca-cwds/devops.git'
-    dir('cws-cares'){
-      git branch: 'master', credentialsId: '433ac100-b3c2-4519-b4d6-207c029a103b', url: 'git@github.com:ca-cwds/cws-cares.git'
-    }
     dir('de-ansible'){
       git branch: 'master', credentialsId: '433ac100-b3c2-4519-b4d6-207c029a103b', url: 'git@github.com:ca-cwds/de-ansible.git'
-    }
-  }
-
-  stage('Check version formatting is correct'){
-    withEnv(["APP_NAME=intake", "ENVIRONMENT_NAME=preint", "VERSION=$APP_VERSION"]) {
-      sh './scripts/utils/manifest_tagging.rb'
     }
   }
 
@@ -31,14 +24,12 @@ node('preint'){
   }
 
   stage('Update manifest'){
-    dir('cws-cares'){
-      sh 'git pull --rebase origin master && git push origin master'
-    }
+    updateManifest("intake", "preint", "433ac100-b3c2-4519-b4d6-207c029a103b", env.APP_VERSION)
   }
 
   stage ('Trigger Smoke acceptance tests') {
            build job: '/Acceptance_tests/acceptance-test-intake/',
-               parameters: [string(name: 'APP_VERSION', value: APP_VERSION)],
+               parameters: [string(name: 'INTAKE_APP_VERSION', value: env.APP_VERSION)],
                wait: false
   }
 
